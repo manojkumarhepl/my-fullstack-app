@@ -1,0 +1,4 @@
+package com.cashence.controller;
+
+public class UserController {
+}

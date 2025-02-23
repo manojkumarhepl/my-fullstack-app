@@ -1,0 +1,6 @@
+spring.application.name=cashence
+server.port=8080
+
+spring.data.mongodb.uri=mongodb://localhost:27017/cashence
+spring.data.mongodb.database=cashence
+spring.jackson.serialization.INDENT_OUTPUT=true

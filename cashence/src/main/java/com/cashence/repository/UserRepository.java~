@@ -1,0 +1,4 @@
+package com.cashence.repository;
+
+public interface UserRepository {
+}

@@ -1,0 +1,15 @@
+package com.cashence.model;
+
+import org.springframework.data.annotation.Id;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+public class Expense {
+    @Id
+    private String id;
+    private String userId; // Reference to User
+    private String category;
+    private BigDecimal amount;
+    private LocalDate date;
+}
