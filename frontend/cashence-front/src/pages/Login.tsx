@@ -1,33 +1,45 @@
-import { useState, useContext } from "react";
-import axiosInstance from "../api/axiosInstance";
-import { AuthContext } from "../context/AuthContext";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import api from "../api/axiosInstance";
 
-const Login = () => {
+const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const authContext = useContext(AuthContext);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(""); // Clear previous errors
+
     try {
-      const response = await axiosInstance.post("/auth/login", { email, password });
-      console.log("Login Success:", response.data);
+      const response = await api.post("/auth/login", { email, password });
 
-      authContext?.login(response.data.token, response.data.role);
+      // ✅ Store token & role in localStorage
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("role", response.data.role);
 
-      navigate("/dashboard");
-    } catch (error) {
-      console.error("Login failed:", error);
+      // ✅ Redirect based on role
+      if (response.data.role === "ADMIN") {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/user/dashboard");
+      }
+    } catch (err: any) {
+      setError("Invalid email or password!");
+      console.error("Login failed:", err.response?.data || err.message);
     }
   };
 
   return (
-    <div>
+    <div className="login-container">
       <h2>Login</h2>
-      <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" />
-      <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" />
-      <button onClick={handleLogin}>Login</button>
+      {error && <p className="error-message">{error}</p>}
+      <form onSubmit={handleLogin}>
+        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        <button type="submit">Login</button>
+      </form>
     </div>
   );
 };

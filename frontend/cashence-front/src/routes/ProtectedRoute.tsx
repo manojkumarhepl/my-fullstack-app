@@ -1,9 +1,24 @@
-import { JSX } from "react";
+import React from "react";
 import { Navigate } from "react-router-dom";
 
-const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
+interface ProtectedRouteProps {
+  element: React.ReactElement;
+  requiredRole: string;
+}
+
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element, requiredRole }) => {
   const token = localStorage.getItem("token");
-  return token ? children : <Navigate to="/login" />;
+  const role = localStorage.getItem("role");
+
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (role !== requiredRole) {
+    return <Navigate to="/unauthorized" replace />;
+  }
+
+  return element;
 };
 
 export default ProtectedRoute;

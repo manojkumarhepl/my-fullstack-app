@@ -29,7 +29,8 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Email is already in use!");
         }
 
-        user.setPassword(passwordEncoder.encode(user.getPassword())); // ✅ Hash password
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole("USER"); // ✅ Default role is USER
         userRepository.save(user);
 
         return ResponseEntity.ok("User registered successfully!");
@@ -37,19 +38,15 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody User user) {
-        User existingUser = userRepository.findByEmail(user.getEmail())
-                .orElse(null);
+        User existingUser = userRepository.findByEmail(user.getEmail()).orElse(null);
 
         if (existingUser == null || !passwordEncoder.matches(user.getPassword(), existingUser.getPassword())) {
             return ResponseEntity.badRequest().body("Invalid email or password!");
         }
 
         String token = jwtUtil.generateToken(existingUser.getEmail(), existingUser.getRole());
-        // ✅ Generate JWT
-        String role = existingUser.getRole(); // ✅ Get user role
+        String role = existingUser.getRole();
 
         return ResponseEntity.ok(Map.of("token", token, "role", role)); // ✅ Return token & role
     }
-
-
 }

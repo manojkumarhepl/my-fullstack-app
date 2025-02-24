@@ -44,7 +44,8 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Invalid email or password!");
         }
 
-        String token = jwtUtil.generateToken(existingUser.getEmail()); // ✅ Generate JWT
+        String token = jwtUtil.generateToken(existingUser.getEmail(), existingUser.getRole());
+        // ✅ Generate JWT
         String role = existingUser.getRole(); // ✅ Get user role
 
         return ResponseEntity.ok(Map.of("token", token, "role", role)); // ✅ Return token & role
